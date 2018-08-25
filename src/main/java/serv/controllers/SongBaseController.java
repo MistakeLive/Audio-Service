@@ -1,10 +1,11 @@
-package serv;
+package serv.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import serv.Entity.Song;
+import serv.SongRepo;
+import serv.entity.Song;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,14 +15,13 @@ import java.util.Vector;
 public class SongBaseController {
 
     private final SongRepo songRepo;
-    static Song song;
 
     @Autowired
     public SongBaseController(SongRepo songRepo){
         this.songRepo=songRepo;
     }
 
-    @RequestMapping("songs")
+    @RequestMapping(value = "songs", method = RequestMethod.GET)
     public Vector<String> list(){
         List<Song>  list = songRepo.findAll();
         Vector v = new Vector();
@@ -32,11 +32,11 @@ public class SongBaseController {
         return v;
     }
 
-    @PostMapping
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     public void addSongtoBase(@RequestParam("file") MultipartFile attachFileObj) throws IOException {
         if ((attachFileObj != null)) {
                     if (!attachFileObj.getOriginalFilename().equals("")) {
-                        song = new Song();
+                        Song song = new Song();
 
                         song.setSongName(attachFileObj.getOriginalFilename());
                         song.setSongFile(attachFileObj.getBytes());
@@ -47,7 +47,7 @@ public class SongBaseController {
             }
     }
 
-    @GetMapping("songs/{name}")
+    @RequestMapping(value = "songs/{name}", method = RequestMethod.GET)
     public byte[] getSong (@PathVariable String name){
         return songRepo.findBysongName(name).getSongFile();
     }

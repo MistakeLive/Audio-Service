@@ -1,4 +1,4 @@
-package serv.Entity;
+package serv.entity;
 
 import javax.persistence.*;
 
@@ -35,7 +35,6 @@ public class Song {
     public void setSongName(String songName) {
         this.songName = songName;
     }
-
 
     public byte[] getSongFile() {
         return songFile;
