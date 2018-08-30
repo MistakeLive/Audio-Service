@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title> Player </title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vuex"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" media="all" href="css/styles.css">
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/mediaelement-and-player.min.js"></script>
+
+    <style>
+   table {
+    margin: auto;
+   }
+   input {
+    margin: center;
+   }
+   </style>
+
+</head>
+
+      <div id="content">
+      <div class="audio-player">
+        <h2>{{message}}</h2>
+        <audio id="audio-player" src="http://localhost:8080/songs/2.mp3" type="audio/mp3" controls="controls"></audio>
+      </div><!-- @end .audio-player -->
+    </div><!-- @end #content -->
+
+<script type="text/x-template" id="grid-template">
+    <table>
+        <thead>
+        <tr>
+            <th v-for="key in columns"
+                @click="sortBy(key)"
+                :class="{ active: sortKey == key }">
+                {{ key | capitalize }}
+                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+          </span>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="entry in filteredData">
+            <td v-for="key in columns">
+                {{entry[key]}}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+<!-- demo root element -->
+<div id="demo" align="center">
+    <form id="search">
+        <input name="query" placeholder="Search" size = 85 v-model="searchQuery">
+    </form>
+    <demo-grid
+            :data="gridData"
+            :columns="gridColumns"
+            :filter-key="searchQuery">
+    </demo-grid>
+</div>
+
+	<script type="text/javascript">
+$(function(){
+  $('#audio-player').mediaelementplayer({
+    alwaysShowControls: true,
+    features: ['playpause','progress','volume'],
+    audioVolume: 'horizontal',
+    audioWidth: 450,
+    audioHeight: 70,
+  });
+});
+</script>
+<script src="js/testApp.js"></script>
+</body>
+</html>
