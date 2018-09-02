@@ -53,7 +53,7 @@ public class SongBaseController {
         return songRepo.findBysongName(name).get(0).getSongFile();
     }
 
-    @RequestMapping(value = "songss", method = RequestMethod.GET)
+    @RequestMapping(value = "songsAndDur", method = RequestMethod.GET)
     public Vector list1() {
         List<Song> list = songRepo.findAll();
 
