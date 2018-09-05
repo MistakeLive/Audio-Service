@@ -11,8 +11,9 @@ import serv.entity.Song;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+
 
 
 @RestController
@@ -26,14 +27,14 @@ public class SongBaseController {
     }
 
     @RequestMapping(value = "songs", method = RequestMethod.GET)
-    public Vector<String> list() {
+    public List<String> returningSongsList() {
         List<Song> list = songRepo.findAll();
-        Vector v = new Vector();
+        List songList = new ArrayList();
 
         for (int i = 0; i < list.size(); i++) {
-            v.add(list.get(i).getSongName());
+            songList.add(list.get(i).getSongName());
         }
-        return v;
+        return songList;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
@@ -83,17 +84,17 @@ public class SongBaseController {
     }
 
     @RequestMapping(value = "songsAndDur", method = RequestMethod.GET)
-    public Vector list1() {
+    public List returningSongsAndDurationList() {
         List<Song> list = songRepo.findAll();
 
-        Vector v = new Vector();
+        List songList = new ArrayList();
 
         for (int i = 0; i < list.size(); i++) {
-            Vector v1 = new Vector();
-            v1.add(list.get(i).getSongName());
-            v1.add(list.get(i).getDuration());
-            v.add(v1);
+            List tempList = new ArrayList();
+            tempList.add(list.get(i).getSongName());
+            tempList.add(list.get(i).getDuration());
+            songList.add(tempList);
         }
-        return v;
+        return songList;
     }
 }
