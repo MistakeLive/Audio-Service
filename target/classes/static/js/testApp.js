@@ -12,6 +12,7 @@ Vue.component('demo-grid', {
     })
     return {
       sortKey: '',
+      file: '',
       sortOrders: sortOrders
     }
   },
@@ -47,8 +48,30 @@ Vue.component('demo-grid', {
     sortBy: function (key) {
       this.sortKey = key
       this.sortOrders[key] = this.sortOrders[key] * -1
-    }
+    },
+    submitFile(){
+                formData = new FormData();
 
+                formData.append('file', this.file);
+
+                axios.post( '/',
+                    formData,
+                    {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                  }
+                ).then(function(){
+                console.log('SUCCESS');
+            })
+            .catch(function(){
+              console.log('FAILURE');
+            });
+          },
+
+          handleFileUpload(){
+            this.file = this.$refs.file.files[0];
+          }
   }
 })
 
@@ -58,7 +81,7 @@ var demo = new Vue({
   data: {
     massage: '',
     searchQuery: '',
-    gridColumns: ['name', 'duratation'],
+    gridColumns: ['name', 'duration'],
     gridData: []
 
   },
@@ -67,6 +90,7 @@ var demo = new Vue({
 
     this.massage = nameSong
    }
+
    },
   created() {
     axios.get('/songsAndDur')
@@ -75,7 +99,7 @@ var demo = new Vue({
     while(response.data[i] != undefined){
         var song = {}
         song.name = response.data[i][0]
-        song.duratation = response.data[i][1]
+        song.duration = response.data[i][1]
         this.gridData.push(song)
         i++
     }

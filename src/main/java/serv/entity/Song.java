@@ -10,6 +10,7 @@ public class Song {
     private Integer id;
     private String songName;
     private byte[] songFile;
+    private String duration;
 
     public Song() {
 
@@ -42,5 +43,13 @@ public class Song {
 
     public void setSongFile(byte[] songFile) {
         this.songFile = songFile;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 }

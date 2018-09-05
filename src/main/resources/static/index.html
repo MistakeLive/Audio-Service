@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <title> Player </title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://unpkg.com/vuex"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" media="all" href="css/styles.css">
@@ -15,7 +13,16 @@
     <style>
    table {
     margin: auto;
-   }
+    }
+
+   th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {background-color: black;}
+
    input {
     margin: center;
    }
@@ -40,6 +47,7 @@
             @set-song="onSetSong"
             >
     </demo-grid>
+
 </div>
 
 <script type="text/x-template" id="grid-template">
@@ -59,6 +67,9 @@
         <tr v-for="entry in filteredData">
             <td v-for="key in columns" @click="$emit('set-song', entry[key])" >
                 {{entry[key]}}
+            </td>
+        <tr><td>File to upload:<input type="file" id="file" ref="file" @change="handleFileUpload()"/></td>
+            <button @click="submitFile()">Submit</button>
             </td>
         </tr>
         </tbody>
