@@ -3,7 +3,8 @@ Vue.component('demo-grid', {
   props: {
     data: Array,
     columns: Array,
-    filterKey: String
+    filterKey: String,
+    count: Number
   },
   data: function () {
     var sortOrders = {}
@@ -50,9 +51,12 @@ Vue.component('demo-grid', {
       this.sortOrders[key] = this.sortOrders[key] * -1
     },
     submitFile(){
+
                 formData = new FormData();
 
                 formData.append('file', this.file);
+
+                var ID;
 
                 axios.post( '/',
                     formData,
@@ -61,9 +65,21 @@ Vue.component('demo-grid', {
                         'Content-Type': 'multipart/form-data'
                     }
                   }
-                ).then(function(){
-                console.log('SUCCESS');
-            })
+                ).then(function(response){
+                console.log('/info/' + response.data)
+                ID = response.data
+                axios.get('/info/' + response.data)
+                        .then(response =>{
+                        var song = {}
+                        song.name = response.data[0]
+                        song.author = response.data[1]
+                        song.duration = response.data[2]
+                        song.id = ID
+                        demo.addSong(song);
+                        this.count++
+                        })
+                }
+            )
             .catch(function(){
               console.log('FAILURE');
             });
@@ -79,30 +95,36 @@ var demo = new Vue({
 
   el: '#demo',
   data: {
-    massage: '',
+    name: '',
     searchQuery: '',
-    gridColumns: ['name', 'duration'],
-    gridData: []
+    gridColumns: ['name', 'author', 'duration'],
+    gridData: [],
+    count: 0,
+    id: 0
 
   },
   methods: {
-  onSetSong: function (nameSong) {
-
-    this.massage = nameSong
+  onSetSong: function (eventData) {
+    this.id = eventData.id
+    this.name = eventData.name
+   },
+   addSong: function(song) {
+    this.gridData.push(song);
    }
 
    },
   created() {
     axios.get('/songsAndDur')
     .then(response => {
-    i = 0
-    while(response.data[i] != undefined){
+    while(response.data[this.count] != undefined){
         var song = {}
-        song.name = response.data[i][0]
-        song.duration = response.data[i][1]
+        song.name = response.data[this.count][0]
+        song.author = response.data[this.count][1]
+        song.duration = response.data[this.count][2]
+        song.id = response.data[this.count][3]
         this.gridData.push(song)
-        i++
+        this.count++
     }
-        })
+     })
   }
 })

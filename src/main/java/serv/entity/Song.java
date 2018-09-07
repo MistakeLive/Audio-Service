@@ -1,40 +1,40 @@
 package serv.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "songList")
 public class Song {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    private String songName;
+    @GeneratedValue(generator="system-uuid")
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    private String id;
     private byte[] songFile;
-    private String duration;
+
+    @OneToOne(fetch = FetchType.LAZY,
+            cascade =  CascadeType.ALL,
+            mappedBy = "song")
+    private SongInfo songInfo;
 
     public Song() {
-
     }
 
-    public Song(String songName, byte[] songFile) {
-        this.songName = songName;
+    public Song(byte[] songFile, SongInfo songInfo) {
         this.songFile = songFile;
+        this.songInfo = songInfo;
+        this.id = songInfo.id;
     }
 
-    public Integer getId() {
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String  id) {
         this.id = id;
-    }
-
-    public String getSongName() {
-        return songName;
-    }
-
-    public void setSongName(String songName) {
-        this.songName = songName;
     }
 
     public byte[] getSongFile() {
@@ -45,11 +45,11 @@ public class Song {
         this.songFile = songFile;
     }
 
-    public String getDuration() {
-        return duration;
+    public SongInfo getSongInfo() {
+        return songInfo;
     }
 
-    public void setDuration(String duration) {
-        this.duration = duration;
+    public void setSongInfo(SongInfo songInfo) {
+        this.songInfo = songInfo;
     }
 }

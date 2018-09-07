@@ -13,6 +13,7 @@
     <style>
    table {
     margin: auto;
+    width: 450;
     }
 
    th, td {
@@ -20,8 +21,6 @@
     text-align: left;
     border-bottom: 1px solid #ddd;
     }
-
-    tr:hover {background-color: black;}
 
    input {
     margin: center;
@@ -32,8 +31,8 @@
 
     <div id="demo" align="center" >
       <div class="audio-player" >
-          <h2>{{massage}}</h2>
-          <audio id="audio-player" :src="'http://localhost:8080/songs/' + massage" type="audio/mp3" controls="controls" autoplay="autoplay" ></audio>
+          <h2>{{name}}</h2>
+          <audio id="audio-player" :src="'http://localhost:8080/songs/' + id" type="audio/mp3" controls="controls" autoplay="autoplay" ></audio>
       </div>
 
 
@@ -44,6 +43,7 @@
             :data="gridData"
             :columns="gridColumns"
             :filter-key="searchQuery"
+            :count="count"
             @set-song="onSetSong"
             >
     </demo-grid>
@@ -65,12 +65,11 @@
         </thead>
         <tbody>
         <tr v-for="entry in filteredData">
-            <td v-for="key in columns" @click="$emit('set-song', entry[key])" >
+            <td v-for="key in columns" @click="$emit('set-song', entry)" >
                 {{entry[key]}}
             </td>
-        <tr><td>File to upload:<input type="file" id="file" ref="file" @change="handleFileUpload()"/></td>
-            <button @click="submitFile()">Submit</button>
-            </td>
+        <tr><td>File to upload:<input type="file" id="file" ref="file" @change="handleFileUpload"/></td><td></td>
+            <button @click="submitFile">Submit</button>
         </tr>
         </tbody>
     </table>
