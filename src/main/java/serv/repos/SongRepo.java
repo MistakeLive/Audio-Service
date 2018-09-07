@@ -1,4 +1,4 @@
-package serv;
+package serv.repos;
 
 import org.springframework.data.repository.CrudRepository;
 import serv.entity.Song;

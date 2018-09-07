@@ -6,10 +6,10 @@ import javazoom.jl.decoder.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import serv.SongInfoRepo;
-import serv.SongRepo;
 import serv.entity.Song;
 import serv.entity.SongInfo;
+import serv.repos.SongInfoRepo;
+import serv.repos.SongRepo;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,9 +30,9 @@ public class SongBaseController {
     }
 
     @RequestMapping(value = "songs", method = RequestMethod.GET)
-    public List<String> returningSongsList() {
+    public List<String> getSongsList() {
         List<Song> list = songRepo.findAll();
-        List songList = new ArrayList();
+        List<String> songList = new ArrayList();
 
         for (int i = 0; i < list.size(); i++) {
             songList.add(list.get(i).getSongInfo().getSongName());
@@ -41,7 +41,7 @@ public class SongBaseController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String addSongtoBase(@RequestParam("file") MultipartFile attachFileObj) throws Exception{
+    public String addSongToBase(@RequestParam("file") MultipartFile attachFileObj) throws Exception{
         String ID = "";
         if ((attachFileObj != null)) {
             if (!attachFileObj.getOriginalFilename().equals("")) {
@@ -96,14 +96,14 @@ public class SongBaseController {
     }
 
     @RequestMapping(value = "songsAndDur", method = RequestMethod.GET)
-    public List getSongsAndDurationList() {
+    public List<String> getSongsInfo() {
 
         List<SongInfo> list;
         List songList =  new ArrayList();
         list = songInfoRepo.findAll();
 
         for (int i = 0; i < list.size(); i++) {
-            List tempList = new ArrayList();
+            List<String> tempList = new ArrayList();
             tempList.add(list.get(i).getSongName());
             tempList.add(list.get(i).getSongAuthor());
             tempList.add(list.get(i).getSongDuration());
