@@ -40,7 +40,7 @@ public class SongBaseController {
         return songList;
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addSongToBase(@RequestParam("file") MultipartFile attachFileObj) throws Exception{
         String ID = "";
         if ((attachFileObj != null)) {
@@ -96,7 +96,7 @@ public class SongBaseController {
     }
 
     @RequestMapping(value = "songsAndDur", method = RequestMethod.GET)
-    public List<String> getSongsInfo() {
+    public List getSongsInfo() {
 
         List<SongInfo> list;
         List songList =  new ArrayList();

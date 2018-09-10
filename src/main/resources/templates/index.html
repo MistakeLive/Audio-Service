@@ -1,19 +1,19 @@
 <!doctype html>
-<html lang="en-US">
+<html lang="en-US" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title> Player </title>
+    <base href="/">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" media="all" href="css/styles.css">
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="js/mediaelement-and-player.min.js"></script>
 
     <style>
    table {
-    margin: auto;
-    width: 450;
+    width: 450px;
     }
 
    th, td {
@@ -24,10 +24,22 @@
 
    input {
     margin: center;
+    height: 25px;
+    font-size: 12px;
+    outline: none;
    }
    </style>
 
 </head>
+<body>
+
+<div>
+    <form th:action="@{/logout}" method="post">
+        <p th:inline="text" align="right">[[${#httpServletRequest.remoteUser}]]
+            <input type="submit" value="Sign Out"/>
+            <a href="@{/login}">Login</a></p>
+    </form>
+</div>
 
     <div id="demo" align="center" >
       <div class="audio-player" >
@@ -37,7 +49,7 @@
 
 
     <form id="search">
-        <input name="query" placeholder="Search" size = 85 v-model="searchQuery">
+        <input name="query" placeholder="Search" style="width: 450px" v-model="searchQuery">
     </form>
     <demo-grid
             :data="gridData"

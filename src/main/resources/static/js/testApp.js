@@ -58,7 +58,7 @@ Vue.component('demo-grid', {
 
                 var ID;
 
-                axios.post( '/',
+                axios.post( '/add',
                     formData,
                     {
                     headers: {

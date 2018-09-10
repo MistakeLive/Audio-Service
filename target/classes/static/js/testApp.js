@@ -58,7 +58,7 @@ Vue.component('demo-grid', {
 
                 var ID;
 
-                axios.post( '/',
+                axios.post( '/add',
                     formData,
                     {
                     headers: {
@@ -71,7 +71,6 @@ Vue.component('demo-grid', {
                 axios.get('/info/' + response.data)
                         .then(response =>{
                         var song = {}
-                        console.log(response.data)
                         song.name = response.data[0]
                         song.author = response.data[1]
                         song.duration = response.data[2]
