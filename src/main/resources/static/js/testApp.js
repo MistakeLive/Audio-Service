@@ -4,7 +4,9 @@ Vue.component('demo-grid', {
     data: Array,
     columns: Array,
     filterKey: String,
-    count: Number
+    count: Number,
+    playlists: Array,
+    cur: Number
   },
   data: function () {
     var sortOrders = {}
@@ -50,44 +52,44 @@ Vue.component('demo-grid', {
       this.sortKey = key
       this.sortOrders[key] = this.sortOrders[key] * -1
     },
+
     submitFile(){
 
-                formData = new FormData();
+        formData = new FormData();
 
-                formData.append('file', this.file);
+        formData.append('file', this.file);
 
-                var ID;
+        var ID;
 
-                axios.post( '/add',
-                    formData,
-                    {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                  }
-                ).then(function(response){
-                console.log('/info/' + response.data)
-                ID = response.data
-                axios.get('/info/' + response.data)
-                        .then(response =>{
-                        var song = {}
-                        song.name = response.data[0]
-                        song.author = response.data[1]
-                        song.duration = response.data[2]
-                        song.id = ID
-                        demo.addSong(song);
-                        this.count++
-                        })
-                }
-            )
-            .catch(function(){
-              console.log('FAILURE');
-            });
-          },
-
-          handleFileUpload(){
-            this.file = this.$refs.file.files[0];
+        axios.post( '/add',
+            formData,
+            {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
           }
+        ).then(function(response){
+        ID = response.data
+        axios.get('/info/' + response.data)
+                .then(response =>{
+                var song = {}
+                song.name = response.data[0]
+                song.author = response.data[1]
+                song.duration = response.data[2]
+                song.id = ID
+                demo.addSong(song);
+                this.count++
+                })
+        }
+    )
+    .catch(function(){
+      console.log('FAILURE');
+    });
+  },
+
+  handleFileUpload(){
+    this.file = this.$refs.file.files[0];
+  }
   }
 })
 
@@ -99,8 +101,14 @@ var demo = new Vue({
     searchQuery: '',
     gridColumns: ['name', 'author', 'duration'],
     gridData: [],
+    currentData: [],
     count: 0,
-    id: 0
+    id: 0,
+    listName: '',
+    playlistList: [],
+    selected: -1,
+    currentPlaylist: -1,
+    inputName: ''
 
   },
   methods: {
@@ -108,9 +116,117 @@ var demo = new Vue({
     this.id = eventData.id
     this.name = eventData.name
    },
+
    addSong: function(song) {
     this.gridData.push(song);
-   }
+   },
+
+   choosePlaylist: function(id){
+    this.currentPlaylist = id
+    this.currentData = []
+    if (id == -1) {
+        this.currentData = this.gridData
+    } else {
+        var pl;
+        for (var j=0; j < this.playlistList.length; j++){
+            if (this.playlistList[j].playlistId == id) {
+             pl = this.playlistList[j];
+             break;
+            }
+        }
+        for (var j = 0; j < pl.songs.length; j++){
+            for (var k = 0; k < this.gridData.length; k++){
+                if (pl.songs[j] == this.gridData[k].id){
+                    this.currentData.push(this.gridData[k])
+                    }
+            }
+        }
+    }
+   },
+
+   onAddSong: function(eventData){
+    if(this.selected < 0) {
+        alert("Create playlist and try later")
+    }else{
+        jQuery.ajax({
+                url:     '/addSongToPlaylist', //url страницы
+                type:     "POST", //метод отправки
+                data: {
+                    songId: eventData.id,
+                    playlistId: this.selected
+                 },
+                success: function(response) { //Данные отправлены успешно
+                    console.log('s')
+                },
+                error: function(response) { // Данные не отправлены
+                    console.log('f')
+                }
+            });
+        for (var i = 0; i < this.playlistList.length; i++){
+            if (this.playlistList[i].playlistId == this.selected){
+
+                if(this.playlistList[i].songs.indexOf(eventData.id) == -1)
+                   this.playlistList[i].songs.push(eventData.id)
+                   else alert("Song already added in this playlist")
+                break;
+            }
+        }
+    }
+   },
+
+   onDeleteSong: function(eventData){
+    var tmp;
+    for (var i = 0; i < this.playlistList.length; i++){
+        if (this.playlistList[i].playlistId == this.currentPlaylist){
+            tmp = this.playlistList[i]
+            break;
+            }
+    }
+
+    tmp.songs.splice(tmp.songs.indexOf(eventData.id), 1)
+
+    for (var i = 0; i < this.currentData.length; i++){
+            if (this.currentData[i].id == eventData.id)
+                this.currentData.splice(i, 1)
+        }
+
+        jQuery.ajax({
+                url:     '/deleteSongFromPlaylist', //url страницы
+                type:     "POST", //метод отправки
+                data: {
+                    songId: eventData.id,
+                    playlistId: this.selected
+                 },
+                success: function(response) { //Данные отправлены успешно
+                    console.log('s')
+                },
+                error: function(response) { // Данные не отправлены
+                    console.log('f')
+                }
+            });
+   },
+
+   addPlaylist: function(){
+   jQuery.ajax({
+       url:     '/addPlaylist', //url страницы
+       type:     "POST", //метод отправки
+       data: {
+            name: this.inputName
+       },
+       success: function(data) { //Данные отправлены успешно
+         var tmp = {}
+         tmp.playlistId = data[0]
+         tmp.songs = []
+         tmp.userId = data[2]
+         tmp.playlistName = data[3]
+         demo.playlistList.push(tmp)
+         demo.inputName = ""
+        },
+    error: function(response) { // Данные не отправлены
+        console.log("f")
+    }
+    });
+    }
 
    },
   created() {
@@ -125,6 +241,27 @@ var demo = new Vue({
         this.gridData.push(song)
         this.count++
     }
+    this.currentData = this.gridData
      })
+
+    axios.get('/userPlaylists')
+    .then(response =>{
+    var i = 0
+
+    while(response.data[i] != undefined){
+        var tmp = {}
+        tmp.playlistId = response.data[i][0]
+        tmp.songs = response.data[i][1]
+        tmp.userId = response.data[i][2]
+        tmp.playlistName = response.data[i][3]
+        this.playlistList.push(tmp)
+        i++
+        }
+        if (i != 0) {
+            this.selected = this.playlistList[0].playlistId
+        }
+
+    })
   }
+
 })

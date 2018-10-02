@@ -3,9 +3,10 @@ package serv.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "songList")
+@Table(name = "song")
 public class Song {
 
     @Id
@@ -18,6 +19,17 @@ public class Song {
             cascade =  CascadeType.ALL,
             mappedBy = "song")
     private SongInfo songInfo;
+
+    @ManyToMany(mappedBy = "songs")
+    private Set<Playlist>  playlists;
+
+    public Set<Playlist> getPlaylists() {
+        return playlists;
+    }
+
+    public void setPlaylists(Set<Playlist> playlists) {
+        this.playlists = playlists;
+    }
 
     public Song() {
     }
