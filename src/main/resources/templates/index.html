@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en-US" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title> Player </title>
+    <base href="/">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" media="all" href="css/styles.css">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="js/mediaelement-and-player.min.js"></script>
+
+<style>
+    body, html {
+    height: 100%;
+    margin: 0;
+
+}
+
+body {
+    background: url('https://raw.githubusercontent.com/BlackrockDigital/startbootstrap-grayscale/master/img/bg-masthead.jpg');
+
+    /* Full height */
+    height: 100%;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+}
+
+   table {
+    width: 450px;
+    border: 2px solid black;
+    }
+
+   th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    }
+
+   input {
+    margin: center;
+    height: 25px;
+    font-size: 12px;
+    outline: none;
+   }
+
+   </style>
+
+</head>
+<body>
+
+<div>
+    <form th:action="@{/logout}" method="post">
+        <p th:inline="text" align="right">[[${#httpServletRequest.remoteUser}]]
+            <input type="submit" value="Sign Out"/>
+    </form>
+</div>
+
+    <div id="demo" align="center" >
+      <div class="audio-player" >
+          <h2>{{name}}</h2>
+          <audio id="audio-player" :src="'http://localhost:8080/songs/' + id" type="audio/mp3" controls="controls" autoplay="autoplay" ></audio>
+      </div>
+
+    <form id="search">
+        <input name="query" placeholder="Search" style="width: 450px" v-model="searchQuery">
+    </form>
+
+    <demo-grid
+            :data="currentData"
+            :columns="gridColumns"
+            :filter-key="searchQuery"
+            :count="count"
+            :playlists="playlistList"
+            :cur="currentPlaylist"
+            @set-song="onSetSong"
+            @add-song="onAddSong"
+            @delete-song="onDeleteSong"
+            >
+    </demo-grid>
+    <p> Добавлять песни в:
+        <select v-model="selected">
+            <option v-for="list in playlistList" :value="list.playlistId">{{ list.playlistName  }}</option>
+        </select>
+    </p>
+
+    <ul class="list-group" style="position: absolute; top: 50px; left: 100px">
+        <h2 style="color:#fff">Playlists:</h2>
+        <li class="list-group-item"  @click="choosePlaylist(-1);" align="left">All Songs</li>
+        <li class="list-group-item" v-for="list in playlistList" @click="choosePlaylist(list.playlistId);" align="left">
+            {{ list.playlistName  }}
+        </li>
+        <li>
+            <p style="color:#fff"> Add Playlist:</p>
+            <input type="text" name="name" v-model="inputName" placeholder="Playlist name" />
+            <input type="button" @click="addPlaylist();" value="Отправить" />
+        </li>
+    </ul >
+
+</div>
+
+<script type="text/x-template" id="grid-template">
+    <table>
+        <thead>
+        <tr>
+            <th v-for="key in columns"
+                @click="sortBy(key)"
+                :class="{ active: sortKey == key }">
+                {{ key | capitalize }}
+                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+          </span>
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="entry in filteredData">
+            <td v-for="key in columns" @click="$emit('set-song', entry)" >
+               {{entry[key]}}
+            </td>
+            <td>
+                <template v-if="cur < 0">
+                    <span @click="$emit('add-song', entry)"> Add </span>
+                </template>
+                <template v-else>
+                    <span @click="$emit('delete-song', entry)"> Delete </span>
+                </template>
+            </td>
+        </tr>
+        <tr><td>File to upload:<input type="file" id="file" ref="file" @change="handleFileUpload"/></td><td></td>
+            <td><button @click="submitFile">Submit</button> </td> <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+</script>
+
+<script type="text/javascript">
+$(function(){
+  $('#audio-player').mediaelementplayer({
+    alwaysShowControls: true,
+    features: ['playpause','progress','volume'],
+    audioVolume: 'horizontal',
+    audioWidth: 450,
+    audioHeight: 70,
+  });
+});
+</script>
+
+<script src="js/testApp.js"></script>
+</body>
+</html>
